@@ -7,6 +7,7 @@ Panels:
         - /links1
         - /links1/base_link1
         - /Odometry1
+        - /Odometry1/Odom lidar1
         - /Point Cloud1
         - /Feature Cloud1
         - /Mapping1
@@ -58,7 +59,7 @@ Visualization Manager:
           Length: 1
           Name: base_link
           Radius: 0.30000001192092896
-          Reference Frame: base_liosam
+          Reference Frame: base_link
           Value: true
       Enabled: true
       Name: links
@@ -115,7 +116,7 @@ Visualization Manager:
               Scale: 1
               Value: true
             Value: false
-          Enabled: true
+          Enabled: false
           Keep: 300
           Name: Odom GPS
           Position Tolerance: 0.10000000149011612
@@ -131,7 +132,7 @@ Visualization Manager:
             Value: Axes
           Topic: /odometry/gps
           Unreliable: false
-          Value: true
+          Value: false
         - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
           Covariance:
@@ -149,7 +150,7 @@ Visualization Manager:
               Scale: 1
               Value: true
             Value: false
-          Enabled: false
+          Enabled: true
           Keep: 300
           Name: Odom lidar
           Position Tolerance: 0.10000000149011612
@@ -165,7 +166,7 @@ Visualization Manager:
             Value: Axes
           Topic: /Odometry/lio_sam
           Unreliable: false
-          Value: false
+          Value: true
       Enabled: true
       Name: Odometry
     - Class: rviz/Group
@@ -185,7 +186,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 140
+          Max Intensity: 123
           Min Color: 0; 0; 0
           Min Intensity: 1
           Name: Velodyne
@@ -452,25 +453,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 12.556055068969727
+      Distance: 70.55790710449219
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 11.264695167541504
-        Y: 0.11332959681749344
-        Z: 5.065114974975586
+        X: 4.699646472930908
+        Y: -3.1478652954101562
+        Z: 2.070910930633545
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.740398645401001
+      Pitch: 1.3203989267349243
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 3.118522882461548
+      Yaw: 3.0435218811035156
     Saved: ~
 Window Geometry:
   Displays:
