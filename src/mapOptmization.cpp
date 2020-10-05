@@ -16,6 +16,8 @@
 
 #include <gtsam/nonlinear/ISAM2.h>
 
+#include <std_msgs/Bool.h>
+
 using namespace gtsam;
 
 using symbol_shorthand::X; // Pose3 (x,y,z,r,p,y)
@@ -72,6 +74,7 @@ public:
 
     ros::Subscriber subLaserCloudInfo;
     ros::Subscriber subGPS;
+    ros::Subscriber subConvergedNowStart;
 
     std::deque<nav_msgs::Odometry> gpsQueue;
     lio_sam::cloud_info cloudInfo;
@@ -137,10 +140,12 @@ public:
     int imuPreintegrationResetId = 0;
 
     nav_msgs::Path globalPath;
+    std_msgs::Bool ConvergedNowStartMsg;
+    bool bConvergedNowStart;
 
     Eigen::Affine3f transPointAssociateToMap;
 
-    mapOptimization()
+    mapOptimization() : bConvergedNowStart(false)
     {
         ISAM2Params parameters;
         parameters.relinearizeThreshold = 0.1;
@@ -154,6 +159,7 @@ public:
 
         subLaserCloudInfo = nh.subscribe<lio_sam::cloud_info>("lio_sam/feature/cloud_info", 10, &mapOptimization::laserCloudInfoHandler, this, ros::TransportHints().tcpNoDelay());
         subGPS = nh.subscribe<nav_msgs::Odometry> (gpsTopic, 200, &mapOptimization::gpsHandler, this, ros::TransportHints().tcpNoDelay());
+        subConvergedNowStart = nh.subscribe<std_msgs::Bool>("/Bool/ConvergedNowStart", 10, &mapOptimization::CallbackConvergedNowStart, this, ros::TransportHints().tcpNoDelay());
 
         pubHistoryKeyFrames = nh.advertise<sensor_msgs::PointCloud2>("lio_sam/mapping/icp_loop_closure_history_cloud", 1);
         pubIcpKeyFrames = nh.advertise<sensor_msgs::PointCloud2>("lio_sam/mapping/icp_loop_closure_corrected_cloud", 1);
@@ -227,6 +233,20 @@ public:
 
         std::lock_guard<std::mutex> lock(mtx);
 
+        if(UseMapMatchingConverged)
+        {
+            if(!bConvergedNowStart)
+            {
+                ROS_WARN("Map matching result is not converged, or ROS-Parameter(UseMapMatchingConverged) is false");
+                return;        
+            }
+            else
+            {
+                ROS_INFO("LIO-SAM is running, and map matching was success");
+            }
+        }
+
+        
         if (timeLaserCloudInfoLast - timeLastProcessing >= mappingProcessInterval) {
 
             timeLastProcessing = timeLaserCloudInfoLast;
@@ -252,6 +272,15 @@ public:
     void gpsHandler(const nav_msgs::Odometry::ConstPtr& gpsMsg)
     {
         gpsQueue.push_back(*gpsMsg);
+    }
+
+    void CallbackConvergedNowStart(const std_msgs::Bool::ConstPtr& msg)
+    {
+        ConvergedNowStartMsg = *msg;
+        if(ConvergedNowStartMsg.data)
+        {
+            bConvergedNowStart = true;
+        }
     }
 
     void pointAssociateToMap(PointType const * const pi, PointType * const po)
@@ -610,6 +639,10 @@ public:
             transformTobeMapped[0] = cloudInfo.imuRollInit;
             transformTobeMapped[1] = cloudInfo.imuPitchInit;
             transformTobeMapped[2] = cloudInfo.imuYawInit;
+
+            transformTobeMapped[3] = 50;
+            transformTobeMapped[4] = 50;
+            transformTobeMapped[5] = 0;
 
             if (!useImuHeadingInitialization)
                 transformTobeMapped[2] = 0;

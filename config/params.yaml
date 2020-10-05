@@ -1,4 +1,6 @@
 lio_sam:
+  #Use Map matching converged
+  UseMapMatchingConverged: true               #If true, mapping will start after map matching is converged. else, this will be ignored.
 
   # Topics
   pointCloudTopic: "velodyne_points"               # Point cloud data
