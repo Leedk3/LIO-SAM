@@ -149,7 +149,7 @@ public:
 
         pubKeyPoses = nh.advertise<sensor_msgs::PointCloud2>("lio_sam/mapping/trajectory", 1);
         pubLaserCloudSurround = nh.advertise<sensor_msgs::PointCloud2>("lio_sam/mapping/map_global", 1);
-        pubOdomAftMappedROS = nh.advertise<nav_msgs::Odometry> ("lio_sam/mapping/odometry", 1);
+        pubOdomAftMappedROS = nh.advertise<nav_msgs::Odometry> ("/Odometry/lio_sam", 1);
         pubPath = nh.advertise<nav_msgs::Path>("lio_sam/mapping/path", 1);
 
         subLaserCloudInfo = nh.subscribe<lio_sam::cloud_info>("lio_sam/feature/cloud_info", 10, &mapOptimization::laserCloudInfoHandler, this, ros::TransportHints().tcpNoDelay());
